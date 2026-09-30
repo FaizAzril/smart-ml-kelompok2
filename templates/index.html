@@ -4,26 +4,173 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Steel Plates Fault Detection</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+            background: #f4f6f8;
+            color: #222;
+        }
+
+        h1, h2 {
+            color: #17365d;
+        }
+
+        .form-container, .result {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            margin-top: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+
+        input {
+            box-sizing: border-box;
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 12px 20px;
+            background: #17365d;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background: #244c7c;
+        }
+
+        .error {
+            color: #b42318;
+        }
+
+        .prediction {
+            color: #187044;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .result {
+            border-left: 5px solid #187044;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                margin: 20px auto;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
+
 <body>
     <header>
         <h1>Steel Plates Fault Detection</h1>
-        <p>Sistem deteksi jenis cacat pada plat baja menggunakan Machine Learning.</p>
+        <p>
+            Sistem prediksi jenis cacat pada plat baja
+            menggunakan Machine Learning.
+        </p>
     </header>
 
     <main>
-        <section>
+        <section class="form-container">
             <h2>Prediksi Cacat Plat Baja</h2>
+
             <p>
-                Masukkan data karakteristik plat baja untuk memulai prediksi.
+                Masukkan karakteristik plat baja untuk
+                memprediksi jenis cacatnya.
             </p>
 
             <p>
-                <strong>Status model:</strong>
-                Model klasifikasi sedang disiapkan.
+                Isi semua kolom menggunakan nilai numerik.
+                Kamu juga bisa mencoba data contoh.
             </p>
+
+            <form method="POST">
+                <button type="button" id="fill-example">
+                    Muat Contoh Data
+                </button>
+
+                <div class="form-grid">
+                    {% for feature in feature_cols %}
+                    <div>
+                        <label for="{{ feature }}">
+                            {{ feature.replace('_', ' ') }}
+                        </label>
+
+                        <input
+                            type="number"
+                            step="any"
+                            id="{{ feature }}"
+                            name="{{ feature }}"
+                            data-example="{{ example_values[feature] }}"
+                            value="{{ request.form.get(feature, '') }}"
+                            required
+                        >
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <button type="submit">
+                    Prediksi Jenis Cacat
+                </button>
+            </form>
         </section>
+
+        {% if prediction %}
+        <section class="result">
+            <h2>Hasil Prediksi</h2>
+
+            <p>Jenis cacat yang diprediksi:</p>
+
+            <p class="prediction">{{ prediction }}</p>
+        </section>
+        {% endif %}
+
+        {% if error %}
+        <section class="result">
+            <p class="error">{{ error }}</p>
+        </section>
+        {% endif %}
     </main>
+
+    <script>
+        document
+            .getElementById("fill-example")
+            .addEventListener("click", function () {
+                document
+                    .querySelectorAll("[data-example]")
+                    .forEach(function (input) {
+                        input.value = input.dataset.example;
+                    });
+            });
+    </script>
 </body>
 </html>
