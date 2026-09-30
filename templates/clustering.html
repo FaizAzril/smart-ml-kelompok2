@@ -1,0 +1,155 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Clustering - Steel Plates</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+    <style>
+        .navigation {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin: 24px auto;
+        }
+
+        .navigation a {
+            display: inline-block;
+            padding: 10px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            background: #e8eef8;
+            color: #1e3a5f;
+            font-weight: 600;
+        }
+
+        .navigation a.active {
+            background: #2457a7;
+            color: white;
+        }
+
+        .cluster-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .cluster-card {
+            padding: 20px;
+            border-radius: 12px;
+            background: #f1f5fb;
+            text-align: center;
+        }
+
+        .cluster-card h3 {
+            margin-top: 0;
+        }
+
+        .cluster-count {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 0;
+        }
+
+        .plot-container {
+            width: 100%;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .plot-container img {
+            display: block;
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .description {
+            line-height: 1.7;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="hero">
+        <div class="hero-content">
+            <span class="eyebrow">MACHINE LEARNING PROJECT</span>
+            <h1>Steel Plates Clustering</h1>
+            <p>
+                Pengelompokan karakteristik cacat plat baja
+                menggunakan K-Means dan visualisasi PCA.
+            </p>
+        </div>
+    </header>
+
+    <nav class="navigation">
+        <a href="{{ url_for('index') }}">Classification</a>
+        <a href="{{ url_for('clustering') }}" class="active">
+            Clustering
+        </a>
+    </nav>
+
+    <main>
+        <section class="form-container">
+            <div class="section-heading">
+                <div>
+                    <h2>Hasil Clustering</h2>
+                    <p class="description">
+                        Model K-Means mengelompokkan data menjadi
+                        dua cluster berdasarkan 29 fitur karakteristik
+                        plat baja. PCA memproyeksikan data ke dua
+                        komponen untuk membantu visualisasi.
+                    </p>
+                </div>
+            </div>
+
+            <div class="cluster-summary">
+                <div class="cluster-card">
+                    <h3>Total Data</h3>
+                    <p class="cluster-count">{{ total_data }}</p>
+                </div>
+
+                {% for cluster_id, count in cluster_counts.items() %}
+                <div class="cluster-card">
+                    <h3>Cluster {{ cluster_id }}</h3>
+                    <p class="cluster-count">{{ count }}</p>
+                    <p>data</p>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="form-container">
+            <div class="section-heading">
+                <div>
+                    <h2>Visualisasi PCA 2D</h2>
+                    <p>
+                        Setiap titik mewakili satu data plat baja.
+                        Warna menunjukkan cluster hasil prediksi K-Means.
+                    </p>
+                </div>
+            </div>
+
+            <div class="plot-container">
+                <img
+                    src="data:image/png;base64,{{ plot_image }}"
+                    alt="Scatter plot clustering K-Means dengan PCA dua dimensi"
+                >
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Steel Plates Fault Detection · Machine Learning Project</p>
+    </footer>
+</body>
+</html>
